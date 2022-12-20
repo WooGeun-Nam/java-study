@@ -51,7 +51,7 @@ public class Prob05 {
 			max=100;
 		}
 		
-		//scanner.close();
+		scanner.close();
 	}
 
 }
