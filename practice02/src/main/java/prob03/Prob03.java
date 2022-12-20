@@ -16,12 +16,17 @@ public class Prob03 {
 
 	private static void replaceSpace(char[] c) {
 		// TODO Auto-generated method stub
+		for(int i=0; i<c.length; i++) {
+			if(c[i]==' ') {
+				c[i] = ',';
+			}
+		}
 		
 	}
 
 	private static void printCharArray(char[] c) {
 		// TODO Auto-generated method stub
-		
+		System.out.println(c);
 	}
 	
 	

@@ -13,6 +13,13 @@ public class Prob01 {
 		int number = scanner.nextInt();
 		
 		
+		for(int i=0; i<10; i++) {
+			int count = 0;
+			count = number / MONEYS[i];
+			number = number % MONEYS[i];
+			System.out.println(MONEYS[i]+"원 : "+count+"개");
+		}
+		
 		scanner.close();
  	}
 }
