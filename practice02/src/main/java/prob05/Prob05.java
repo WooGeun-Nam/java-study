@@ -16,7 +16,7 @@ public class Prob05 {
 			Random random = new Random();
 			int correctNumber = random.nextInt( 100 ) + 1;
 			System.out.println("수를 결정하였습니다. 맞추어 보세요");
-			System.out.println(correctNumber);
+			//System.out.println(correctNumber);
 			int count=0;
 			int min=1;
 			int max=100;
