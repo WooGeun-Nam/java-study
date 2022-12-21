@@ -27,8 +27,6 @@ public class Prob03 {
 	private static void printCharArray(char[] c) {
 		// TODO Auto-generated method stub
 		System.out.println(c);
-	}
-	
-	
+	}  
 
 }
