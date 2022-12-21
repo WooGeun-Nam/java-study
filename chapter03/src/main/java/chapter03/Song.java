@@ -7,7 +7,27 @@ public class Song {
 	private String composer;
 	private String year;
 	private String track;
-
+	
+	public Song(String title,String artist) {
+		this(title, artist, null, null, null, null);
+		System.out.println(".......somecode6");
+	}
+	
+	public Song(String title, String artist, String album, String composer, String year, String track) {
+		this.title = title;
+		this.artist = artist;
+		this.album = album;
+		this.composer = composer;
+		this.year = year;
+		this.track = track;
+		
+		System.out.println(".......somecode1");
+		System.out.println(".......somecode2");
+		System.out.println(".......somecode3");
+		System.out.println(".......somecode4");
+		System.out.println(".......somecode5");
+	}
+	
 	public String getTitle() {
 		return title;
 	}

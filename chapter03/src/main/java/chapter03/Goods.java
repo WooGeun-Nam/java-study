@@ -10,11 +10,20 @@ public class Goods {
 	public Goods() {
 		Goods.countOfGoods = Goods.countOfGoods + 1;
 	}
+	
+	public Goods(String name, int price, int countStock, int countSold) {
+		this.name = name;
+		this.price = price;
+		this.countStock = countStock;
+		this.countSold = countSold;
+		
+		Goods.countOfGoods = Goods.countOfGoods + 1;
+	}
 	public int calcDiscountPrice(float discountRate) {
 		return (int)(price*discountRate);
 	}
 	public void printInfo() {
-		System.out.println(name + price + countStock + countSold);
+		System.out.println(name+":" + price + countStock + countSold);
 	}
 	public String getName() {
 		return name;
