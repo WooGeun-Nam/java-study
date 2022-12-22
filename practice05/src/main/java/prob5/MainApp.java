@@ -27,7 +27,6 @@ public class MainApp {
 		} catch ( MyStackException ex) {
 			System.out.println( ex );
 		}
-
 	}
 
 }

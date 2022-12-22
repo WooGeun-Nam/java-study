@@ -1,6 +1,5 @@
 package prob02;
 
-import java.awt.print.Book;
 import java.util.Scanner;
 
 public class BookShop {
@@ -32,13 +31,14 @@ public class BookShop {
 		scanner.close();
 		
 		// rent() 출력할때 책 번호 출력
+		books[num-1].rent();
 		
 		// (3) Book 객체의 정보를 출력
 		System.out.println("*****도서 정보 출력하기******");
 		displayBookInfo( books );
 	}
 	
-	private void displayBookInfo(Book[] books) {
+	private static void displayBookInfo(Book[] books) {
 		for(Book book:books) { // forEach 
 			book.print();
 		}
