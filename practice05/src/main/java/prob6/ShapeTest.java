@@ -6,10 +6,13 @@ import java.util.List;
 public class ShapeTest {
 
 	public static void main(String[] args) {
-		List<Shape> list = new ArrayList<Shape>();
+		//List<Shape> list = new ArrayList<Shape>();
+		Shape[] list = new Shape[2];
 		
-		list.add( new Rectangle(5, 6) );
-		list.add( new RectTriangle( 6, 2) );
+		list[0] = new Rectangle(5, 6);
+		list[1] = new RectTriangle(6, 2);
+//		list.add( new Rectangle(5, 6) );
+//		list.add( new RectTriangle( 6, 2) );
 		
 		for( Shape shape : list ) {
 			System.out.println( "area:" + shape.getArea() );
@@ -23,4 +26,4 @@ public class ShapeTest {
 			}
 		}
 	}
-}
+} // getArea, get Perimeter -> double , Math.sqrt(w*w+h*h) 둘레

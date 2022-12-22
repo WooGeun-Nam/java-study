@@ -1,4 +1,4 @@
-package prob5;
+package prob5; // Stack 만드는 문제
 
 public class MainApp {
 

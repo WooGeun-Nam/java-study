@@ -1,4 +1,4 @@
-package prob03;
+package prob03; // 상속문제
 
 public class Marine{
 	// 현재 위치

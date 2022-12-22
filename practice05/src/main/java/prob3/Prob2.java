@@ -14,4 +14,6 @@ public class Prob2 {
 		bird02.sing();
 		System.out.println( bird02 );
 	}
+	
+	// bird에서 추상 name 이 bird에 있어야됨
 }

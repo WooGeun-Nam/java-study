@@ -1,4 +1,4 @@
-package prob04;
+package prob04; // 오버라이드 Employee 건들면안됨
 
 public class Employee {
 	private String name;

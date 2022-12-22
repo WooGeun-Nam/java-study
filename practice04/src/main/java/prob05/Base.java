@@ -1,4 +1,4 @@
-package prob05;
+package prob05; // 오버라이드 Base 건들면 안됨
 
 public class Base {
 	public void service(String state){

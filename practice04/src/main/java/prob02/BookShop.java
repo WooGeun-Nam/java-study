@@ -1,5 +1,6 @@
 package prob02;
 
+import java.awt.print.Book;
 import java.util.Scanner;
 
 public class BookShop {
@@ -7,7 +8,7 @@ public class BookShop {
 	public static void main(String[] args) {
 		Book[] books = new Book[10];
 		
-		books[0] = new Book( 1, "트와일라잇", "스테파니메이어" );
+		books[0] = new Book( 1, "트와일라잇", "스테파니메이어" ); // 책 번호, 책이름, 책저자
 		books[1] = new Book( 2,"뉴문", "스테파니메이어" );
 		books[2] = new Book( 3,"이클립스","스테파니메이어");
 		books[3] = new Book( 4,"브레이킹던","스테파니메이어");
@@ -18,15 +19,28 @@ public class BookShop {
 		books[8] = new Book( 9,"태백산맥","조정래");
 		books[9] = new Book( 10,"풀하우스","원수연");
 		
+
+		
+		// (1) Book 객체의 정보를 출력
+		System.out.println("*****도서 정보 출력하기******");
+		displayBookInfo( books );
+		
+		// (2) 입력된 번호에 맞는 책을 찾아 대여 되었음(상태코드=0)을 체크 합니다.
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("대여 하고 싶은 책의 번호를 입력하세요:");
 		int num = scanner.nextInt();
 		scanner.close();
 		
-		// (1) 입력된 번호에 맞는 책을 찾아 대여 되었음(상태코드=0)을 체크 합니다.
+		// rent() 출력할때 책 번호 출력
 		
-		// (2) Book 객체의 정보를 출력
+		// (3) Book 객체의 정보를 출력
 		System.out.println("*****도서 정보 출력하기******");
 		displayBookInfo( books );
+	}
+	
+	private void displayBookInfo(Book[] books) {
+		for(Book book:books) { // forEach 
+			book.print();
+		}
 	}
 }
