@@ -25,7 +25,7 @@ public class ExceptionTest {
 			// System.exit(0);
 			return;
 		} finally {
-			System.out.println("!!!!!!!!!!!");
+			System.out.println("자원 정리 예: file close, network close~");
 		}
 		System.out.println("Some Code6...");
 		System.out.println("Some Code7...");
