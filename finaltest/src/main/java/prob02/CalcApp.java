@@ -28,6 +28,15 @@ public class CalcApp {
 			Arithmetic arithmetic = null;
 			
 			/* 코드 작성 */
+			if (tokens[2].equals("+")) {
+				arithmetic = new Add();
+			} else if (tokens[2].equals("-")) {
+				arithmetic = new Sub();
+			} else if (tokens[2].equals("*")) {
+				arithmetic = new Mul();
+			} else if (tokens[2].equals("/")) {
+				arithmetic = new Div();
+			}
 			
 			int result = arithmetic.calculate(lValue, rValue);
 			System.out.println( ">> " + result );

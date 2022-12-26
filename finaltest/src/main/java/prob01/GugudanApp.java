@@ -48,6 +48,9 @@ public class GugudanApp {
 		/* 코드 작성(수정 가능) */
 		final int COUNT_ANSWER_NUMBER = 9;
 		int[] boardNumbers = new int[COUNT_ANSWER_NUMBER];
+		for(int i=0; i<boardNumbers.length; i++) {
+			boardNumbers[i] = randomize(1, 81);
+		}
 		return boardNumbers;
 	}
 }

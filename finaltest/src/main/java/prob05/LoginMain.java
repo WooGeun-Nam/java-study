@@ -37,5 +37,15 @@ public class LoginMain {
 	
 	public static void login(List<User> users, User user ){
 		/* 코드 작성 */
+		boolean check = false;
+		for(User usr:users) {
+			if(usr.getId().equals(user.getId())) check = true;
+		}
+		if(!check) throw new UserNotFoundException("존재하지 않는 사용자입니다.");
+		check = false;
+		for(User usr:users) {
+			if(usr.getId().equals(user.getId()) && usr.getPassword().equals(user.getPassword())) check = true;
+		}
+		if(!check) throw new PasswordDismatchException("비밀번호가 틀렸습니다.");
 	}
 }

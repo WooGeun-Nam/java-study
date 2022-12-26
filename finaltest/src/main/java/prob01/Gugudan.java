@@ -3,5 +3,11 @@ package prob01;
 public class Gugudan {
 	private int lValue;
 	private int rValue;
-	//  해쉬셋
+
+	public Gugudan(int lValue, int rValue) {
+		this.lValue = lValue;
+		this.rValue = rValue;
+	}
+	
+	// 해시셋
 }
