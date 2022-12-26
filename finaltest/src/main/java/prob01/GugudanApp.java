@@ -48,8 +48,23 @@ public class GugudanApp {
 		/* 코드 작성(수정 가능) */
 		final int COUNT_ANSWER_NUMBER = 9;
 		int[] boardNumbers = new int[COUNT_ANSWER_NUMBER];
-		for(int i=0; i<boardNumbers.length; i++) {
+		int[] resize = new int[COUNT_ANSWER_NUMBER];
+		Gugudan g = new Gugudan(1,81);
+		for(int i=0; i<COUNT_ANSWER_NUMBER; i++) {
 			boardNumbers[i] = randomize(1, 81);
+		}
+		boardNumbers = g.getDistinctHashSet(boardNumbers);
+		int distSize = boardNumbers.length;
+		while(distSize<9) {
+			for (int i=0; i<distSize; i++) {
+				resize[i] = boardNumbers[i];
+			}
+			for (int i=distSize; i<COUNT_ANSWER_NUMBER; i++) {
+				resize[i] = randomize(1, 81);
+			}
+			boardNumbers = resize;
+			boardNumbers = g.getDistinctHashSet(boardNumbers);
+			distSize = boardNumbers.length;
 		}
 		return boardNumbers;
 	}
