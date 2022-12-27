@@ -3,12 +3,12 @@ package io;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 public class PhoneList01 {
 
@@ -17,6 +17,10 @@ public class PhoneList01 {
 		try {
 			// io - stream 이용
 			File file = new File("phone.txt");
+			if(!file.exists()) {
+				System.out.println("file not found");
+				return;
+			}
 			
 			System.out.println("=====파일정보=====");
 			System.out.println(file.getAbsolutePath());
@@ -38,8 +42,30 @@ public class PhoneList01 {
 			// 3. 보조 스트림2(char1|char2|char3|char4|\n -> "char1char2fchar3char4"
 			br = new BufferedReader(isr);
 			
-		} catch (FileNotFoundException e) {
-			System.out.println("File Not Found:"+e);
+			// 4. 처리 : Tokenizer 사
+			String line = null;
+			while((line = br.readLine()) != null) {
+				// 스플릿 도 가능
+				StringTokenizer st = new StringTokenizer(line,"\t ");
+				
+				int index = 0;
+				while(st.hasMoreElements()) {
+					String token = st.nextToken();
+					
+					if(index  == 0) { // 이름
+						System.out.print(token + ":");
+					} else if(index == 1) { // 전화번호1
+						System.out.print(token + "-");
+					} else if(index == 2) {
+						System.out.print(token + "-");
+					} else {
+						System.out.print(token);
+					}
+					index++;
+				}
+				System.out.print("\n");
+			}
+			
 		} catch (UnsupportedEncodingException e) {
 			System.out.println("Error:"+e);
 		} catch (IOException e){
