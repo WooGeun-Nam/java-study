@@ -1,6 +1,8 @@
 package test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,14 +23,40 @@ public class TCPServer {
 			// 3. accept
 			Socket socket = serverSocket.accept(); // blocking
 			
-			InetSocketAddress inetRemoteSocketAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
-			String remoteHostAddress = inetRemoteSocketAddress.getAddress().getHostAddress();
-			int remotePort = inetRemoteSocketAddress.getPort();
-			
-			System.out.println("[server] connected by client["+remoteHostAddress+":"+remotePort+"]");
-			
-			// 4. 
-			
+			try {
+				InetSocketAddress inetRemoteSocketAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
+				String remoteHostAddress = inetRemoteSocketAddress.getAddress().getHostAddress();
+				int remotePort = inetRemoteSocketAddress.getPort();
+				
+				System.out.println("[server] connected by client["+remoteHostAddress+":"+remotePort+"]");
+				
+				// 4. IO Stream 받아오기
+				OutputStream os = socket.getOutputStream();
+				InputStream is = socket.getInputStream();
+				
+				while(true) {
+					// 5. 데이터 읽기
+					byte[] buffer = new byte[256];
+					int readByteCount = is.read(buffer); // blocking
+					if(readByteCount==-1) {
+						System.out.println("[server] closed by client");
+						break;
+					}
+					String data = new String(buffer,0,readByteCount,"utf-8");
+					System.out.println("[server] received:"+data);
+				}
+				
+			} catch (IOException e) {
+				System.out.println("[server] error:"+e);
+			} finally {
+				try {
+					if(socket != null && !socket.isClosed()) {
+						socket.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		} catch (IOException e) {
 			System.out.println("[server] error:"+e);
 		} finally {
