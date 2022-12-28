@@ -1,9 +1,9 @@
 package test;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class TCPServer {
 
@@ -19,10 +19,15 @@ public class TCPServer {
 			serverSocket.bind(new InetSocketAddress("0.0.0.0",5000));
 			
 			// 3. accept
-			serverSocket.accept(); // blocking
+			Socket socket = serverSocket.accept(); // blocking
 			
-			System.out.println("connected");
+			InetSocketAddress inetRemoteSocketAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
+			String remoteHostAddress = inetRemoteSocketAddress.getAddress().getHostAddress();
+			int remotePort = inetRemoteSocketAddress.getPort();
 			
+			System.out.println("[server] connected by client["+remoteHostAddress+":"+remotePort+"]");
+			
+			// 4. 
 			
 		} catch (IOException e) {
 			System.out.println("[server] error:"+e);
