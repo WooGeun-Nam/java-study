@@ -35,18 +35,17 @@ public class EchoClient {
 				System.out.print(">");
 				String line = scanner.nextLine();
 
-				pw.println(line);
 				if ("exit".equals(line)) {
 					break;
 				}
 
 				pw.println(line);
 				String data = br.readLine();
-				if (data == null) {
+				if(data == null) {
 					log("closed by server");
 					break;
 				}
-
+				
 				System.out.println("<" + data);
 			}
 		} catch (IOException e) {
