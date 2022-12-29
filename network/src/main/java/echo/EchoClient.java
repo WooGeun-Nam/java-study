@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Scanner;
 
 public class EchoClient {
@@ -48,7 +49,9 @@ public class EchoClient {
 				
 				System.out.println("<" + data);
 			}
-		} catch (IOException e) {
+		} catch (SocketException e) {
+			log("suddenly closed by server"+e);
+		}catch (IOException e) {
 			log("error:" + e);
 		} finally {
 			try {

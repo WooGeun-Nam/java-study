@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class TCPServer {
 
@@ -50,6 +51,8 @@ public class TCPServer {
 					os.write(data.getBytes("utf-8"));
 				}
 				
+			} catch (SocketException e) {
+				System.out.println("[server] suddenly closed by client"+e);
 			} catch (IOException e) {
 				System.out.println("[server] error:"+e);
 			} finally {
