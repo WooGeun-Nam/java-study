@@ -107,18 +107,32 @@ public class RequestHandler extends Thread {
 		outputStream.write(body);
 	}
 	
-	private void response404Error(OutputStream outputStream, String protocol) {
-		// HTTP/1.1 404 Not Found
-		// Content-Type:.....
-		// \r\n
-		// ......
+	private void response404Error(OutputStream outputStream, String protocol) throws IOException {
+		File file = new File(DOCUMENT_ROOT + "/error/404.html");
+		
+		// nio
+		byte[] body = Files.readAllBytes(file.toPath());
+		String contentType = Files.probeContentType(file.toPath());
+		
+		// 응답
+		outputStream.write((protocol+" 404 Not Found\r\n").getBytes("UTF-8"));
+		outputStream.write(("Content-Type:"+contentType+"; charset=utf-8\r\n").getBytes("UTF-8"));
+		outputStream.write("\r\n".getBytes());
+		outputStream.write(body);
 	}
 	
-	private void response400Error(OutputStream outputStream, String string) {
-		// HTTP/1.1 400 Bad Request
-		// Content-Type:.....
-		// \r\n
-		// ......
+	private void response400Error(OutputStream outputStream, String protocol) throws IOException {
+		File file = new File(DOCUMENT_ROOT + "/error/400.html");
+		
+		// nio
+		byte[] body = Files.readAllBytes(file.toPath());
+		String contentType = Files.probeContentType(file.toPath());
+		
+		// 응답
+		outputStream.write((protocol+" 400 Bad Request\r\n").getBytes("UTF-8"));
+		outputStream.write(("Content-Type:"+contentType+"; charset=utf-8\r\n").getBytes("UTF-8"));
+		outputStream.write("\r\n".getBytes());
+		outputStream.write(body);
 	}
 
 	public void consoleLog(String message) {
