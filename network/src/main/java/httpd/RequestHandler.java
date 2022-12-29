@@ -59,17 +59,9 @@ public class RequestHandler extends Thread {
 				// methods : POST, PUT, DELETE, HEAD, CONNECT
 				// SimpleHttpServer 에서는 무시(400 Bad Request).
 				// response가 없다면 문제가 생긴다.
-				// 과제
 				response400Error(outputStream, tokens[2]);
 			}
-
-			// 예제 응답입니다.
-			// 서버 시작과 테스트를 마친 후, 주석 처리 합니다.
-//			outputStream.write("HTTP/1.1 200 OK\r\n".getBytes("UTF-8"));
-//			outputStream.write("Content-Type:text/html; charset=utf-8\r\n".getBytes("UTF-8"));
-//			outputStream.write("\r\n".getBytes());
-//			outputStream.write("<h1>이 페이지가 잘 보이면 실습과제 SimpleHttpServer를 시작할 준비가 된 것입니다.</h1>".getBytes("UTF-8"));
-
+			
 		} catch (Exception ex) {
 			consoleLog("error:" + ex);
 		} finally {
