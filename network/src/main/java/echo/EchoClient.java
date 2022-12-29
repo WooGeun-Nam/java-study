@@ -25,8 +25,8 @@ public class EchoClient {
 			socket.connect(new InetSocketAddress(SERVER_IP, EchoServer.PORT));
 			log("connected");
 
-			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"utf-8"), true);
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"utf-8"));
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 
 			InputStream is = socket.getInputStream();
 			OutputStream os = socket.getOutputStream();
@@ -42,16 +42,16 @@ public class EchoClient {
 
 				pw.println(line);
 				String data = br.readLine();
-				if(data == null) {
+				if (data == null) {
 					log("closed by server");
 					break;
 				}
-				
+
 				System.out.println("<" + data);
 			}
 		} catch (SocketException e) {
-			log("suddenly closed by server"+e);
-		}catch (IOException e) {
+			log("suddenly closed by server" + e);
+		} catch (IOException e) {
 			log("error:" + e);
 		} finally {
 			try {
