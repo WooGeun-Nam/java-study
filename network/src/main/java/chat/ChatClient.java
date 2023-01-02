@@ -50,8 +50,6 @@ public class ChatClient {
 				if ("quit".equals(line)) {
 					String msg = "QUIT";
 					pw.println(msg);
-					System.out.println("quit 보냄");
-					//thread.join();
 					break;
 				} else {
 					// 메시지 처리
@@ -62,8 +60,6 @@ public class ChatClient {
 					pw.println(msg);
 				}
 			}
-		} catch (SocketException e) {
-			log("suddenly closed by server" + e);
 		} catch (IOException e) {
 			log("error:" + e);
 		} finally {

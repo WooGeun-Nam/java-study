@@ -28,7 +28,7 @@ public class ChatServerThread extends Thread {
 
 			while (true) {
 				String request = br.readLine();
-				if (request.equals(null)) {
+				if (request == null) {
 					// 수정필요
 					doQuit(pw);
 					break;
@@ -41,7 +41,7 @@ public class ChatServerThread extends Thread {
 				} else if ("MESSAGE".equals(tokens[0])) {
 					doMessage(tokens[1], pw);
 				} else if ("QUIT".equals(tokens[0])) {
-					doQuit(pw);
+					pw.println("");
 				} else {
 					ChatServer.log("알수없는 메소드");
 				}
@@ -63,17 +63,11 @@ public class ChatServerThread extends Thread {
 	private void doJoin(String name, PrintWriter writer) {
 		this.name = name;
 
-		String data = name + "님이 참여하였습니다." + "\n>>";
-		broadcast(data, writer);
+		String data = name + "님이 참여하였습니다.";
+		broadcast(data);
 
 		/* writer pool에 저장 */
 		addWriter(writer);
-		
-		System.out.println(name+":JOIN:OK");
-		writer.println("JOIN:OK\n>>");
-		// ack
-		// writer.println("join:ok");
-		// writer.flush();
 	}
 
 	private void doMessage(String message, PrintWriter pw) {
@@ -83,17 +77,16 @@ public class ChatServerThread extends Thread {
 		String decodedString = new String(decodedBytes);
 
 		// 사용자 이름과 함께 전송
-		String sendMsg = name + ":" + decodedString + "\n>>";
-		broadcast(sendMsg, pw);
+		String sendMsg = name + ":" + decodedString;
+		broadcast(sendMsg);
 	}
 
 	private void doQuit(PrintWriter writer) {
 		removeWriter(writer);
 		
-		String data = name + "님이 퇴장 하였습니다." + "\n>>";
-		broadcast(data, writer);
-
-		writer.println();
+		String data = name + "님이 퇴장 하였습니다.";
+		
+		broadcast(data);
 	}
 
 	private void removeWriter(Writer writer) {
@@ -109,15 +102,23 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	private void broadcast(String data, Writer pw) {
+	private void broadcast(String data) {
 
+		// CLI 환경에서 나한테 보여주지 않기 위한 처리
+//		synchronized (listWriters) {
+//			for (Writer writer : listWriters) {
+//				PrintWriter printWriter = (PrintWriter) writer;
+//				if (pw != printWriter) {
+//					printWriter.println(data);
+//					printWriter.flush();
+//				}
+//			}
+//		}
 		synchronized (listWriters) {
 			for (Writer writer : listWriters) {
 				PrintWriter printWriter = (PrintWriter) writer;
-				if (pw != printWriter) {
-					printWriter.println(data);
-					printWriter.flush();
-				}
+				printWriter.println(data);
+				printWriter.flush();
 			}
 		}
 	}
