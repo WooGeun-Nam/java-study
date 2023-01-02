@@ -12,9 +12,9 @@ import java.util.List;
 public class ChatServer {
 	public static final int PORT = 6000;
 	public static final String SERVER_IP = "0.0.0.0";
+	public static List<User> listUser = new ArrayList<User>();
 	
 	public static void main(String[] args) {
-		List<Writer> listWriters = new ArrayList<Writer>();
 		ServerSocket serverSocket = null;
 		
 		try {
@@ -25,7 +25,7 @@ public class ChatServer {
 			
 			while(true) {
 				Socket socket = serverSocket.accept();
-				new ChatServerThread(socket, listWriters).start();
+				new ChatServerThread(socket, listUser).start();
 			}
 			
 		} catch (SocketException e) {

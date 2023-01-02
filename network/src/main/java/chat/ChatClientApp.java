@@ -30,14 +30,20 @@ public class ChatClientApp {
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 
 			// 4. join protocol
-			String line = null;
 			while (true) {
 				System.out.print("닉네임>>");
 				name = scanner.nextLine();
 				if (!name.isEmpty()) {
-					pw.println("JOIN:" + name);
-					pw.flush();
-					break;
+					pw.println("CHECK:" + name);
+					String data = br.readLine();
+					if("PASS".equals(data)) {
+						pw.println("JOIN:" + name);
+						pw.flush();
+						break;
+					} else {
+						System.out.println("중복되는 대화명이 존재합니다.\n");
+						continue;
+					}
 				}
 				System.out.println("대화명은 한글자 이상 입력해야 합니다.\n");
 			}
@@ -64,8 +70,6 @@ public class ChatClientApp {
 				e.printStackTrace();
 			}
 		}
-
-		// new ChatWindow(name).show();
 	}
 
 	private static void log(String message) {

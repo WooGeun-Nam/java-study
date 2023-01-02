@@ -5,19 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.Socket;
 import java.util.Base64;
 import java.util.List;
 
 public class ChatServerThread extends Thread {
-	private String name;
+	private User user;
 	private Socket socket;
-	List<Writer> listWriters;
+	List<User> listUser;
 
-	public ChatServerThread(Socket socket, List<Writer> listWriters) {
+	public ChatServerThread(Socket socket, List<User> listUser) {
 		this.socket = socket;
-		this.listWriters = listWriters;
+		this.listUser = listUser;
 	}
 
 	@Override
@@ -35,9 +34,12 @@ public class ChatServerThread extends Thread {
 				}
 				// 프로토콜 처리 -> split
 				String[] tokens = request.split(":");
-				if ("JOIN".equals(tokens[0])) {
+				if ("CHECK".equals(tokens[0])) {
+					nameCheck(tokens[1], pw);
+				} else if ("JOIN".equals(tokens[0])) {
 					doJoin(tokens[1], pw);
-					// ~~~ 메소드 조건들 추가
+				} else if ("LIST".equals(tokens[0])) {
+					responseUserList(pw);
 				} else if ("MESSAGE".equals(tokens[0])) {
 					doMessage(tokens[1], pw);
 				} else if ("QUIT".equals(tokens[0])) {
@@ -60,16 +62,42 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	private void doJoin(String name, PrintWriter writer) {
-		this.name = name;
+	private void nameCheck(String receiveName, PrintWriter writer) {
+		boolean nameCheck = false;
+		synchronized (listUser) {
+			for (User user : listUser) {
+				if (user.getName().equals(receiveName)) {
+					nameCheck = true;
+				}
+			}
+		}
+		if (!nameCheck) {
+			writer.println("PASS");
+		} else {
+			writer.println("NONPASS");
+		}
+	}
 
-		String data = name + "님이 참여하였습니다.";
+	private void doJoin(String name, PrintWriter pw) {
+		this.user = new User(pw, name);
+		String data = user.getName() + "님이 참여하였습니다.";
+
 		broadcast(data);
 
 		/* writer pool에 저장 */
-		addWriter(writer);
+		addWriter(user);
 	}
 
+	private void responseUserList(PrintWriter pw) {
+		String response = "";
+		synchronized (listUser) {
+			for (User user : listUser) {
+				response += user.getName()+",";
+			}
+		}
+		pw.println(response);
+	}
+	
 	private void doMessage(String message, PrintWriter pw) {
 		/* 잘 구현 해 보기 */
 		// 디코딩
@@ -77,46 +105,34 @@ public class ChatServerThread extends Thread {
 		String decodedString = new String(decodedBytes);
 
 		// 사용자 이름과 함께 전송
-		String sendMsg = name + ":" + decodedString;
+		String sendMsg = user.getName() + ":" + decodedString;
 		broadcast(sendMsg);
 	}
 
 	private void doQuit(PrintWriter writer) {
-		removeWriter(writer);
-		
-		String data = name + "님이 퇴장 하였습니다.";
-		
+		removeWriter(user);
+
+		String data = user.getName() + "님이 퇴장 하였습니다.";
+
 		broadcast(data);
 	}
 
-	private void removeWriter(Writer writer) {
-		/* 잘 구현 해보기 */
-		synchronized (listWriters) {
-			listWriters.remove(writer);
+	private void removeWriter(User user) {
+		synchronized (listUser) {
+			listUser.remove(user);
 		}
 	}
 
-	private void addWriter(Writer writer) {
-		synchronized (listWriters) {
-			listWriters.add(writer);
+	private void addWriter(User user) {
+		synchronized (listUser) {
+			listUser.add(user);
 		}
 	}
 
 	private void broadcast(String data) {
-
-		// CLI 환경에서 나한테 보여주지 않기 위한 처리
-//		synchronized (listWriters) {
-//			for (Writer writer : listWriters) {
-//				PrintWriter printWriter = (PrintWriter) writer;
-//				if (pw != printWriter) {
-//					printWriter.println(data);
-//					printWriter.flush();
-//				}
-//			}
-//		}
-		synchronized (listWriters) {
-			for (Writer writer : listWriters) {
-				PrintWriter printWriter = (PrintWriter) writer;
+		synchronized (listUser) {
+			for (User user : listUser) {
+				PrintWriter printWriter = (PrintWriter) user.getWriter();
 				printWriter.println(data);
 				printWriter.flush();
 			}

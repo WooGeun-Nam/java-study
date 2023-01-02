@@ -1,4 +1,5 @@
 package chat;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -12,8 +13,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Base64;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -26,7 +29,7 @@ public class ChatWindowSwing {
 	private JButton buttonSend;
 	private JTextField textField;
 	private JTextArea textArea;
-	private JTextArea userArea;
+	private JList userList;
 	private PrintWriter pw;
 	private BufferedReader br;
 
@@ -37,19 +40,32 @@ public class ChatWindowSwing {
 		buttonSend = new JButton("Send");
 		textField = new JTextField();
 		textArea = new JTextArea(30, 70);
-		userArea = new JTextArea(30, 10);
 		this.pw = pw;
 		this.br = br;
 	}
 
 	public void show() {
+		// 사용자 받아오기
+		String[] users = null;
+		pw.println("LIST");
+		try {
+			String request = br.readLine();
+			if(request != null) {
+				users = request.split(",");
+			}
+		} catch (IOException e) {
+			System.out.println("사용자데이터를 불러오지 못함");
+		}
+		
+		userList = new JList(users);
+
 		// Button
 		buttonSend.setBackground(Color.GRAY);
 		buttonSend.setForeground(Color.WHITE);
 		// 옵저버 패턴
-		buttonSend.addActionListener( new ActionListener() {
+		buttonSend.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed( ActionEvent actionEvent ) {
+			public void actionPerformed(ActionEvent actionEvent) {
 				sendMessage();
 			}
 		});
@@ -60,12 +76,12 @@ public class ChatWindowSwing {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				char keyCode = e.getKeyChar();
-				if(keyCode == KeyEvent.VK_ENTER) {
+				if (keyCode == KeyEvent.VK_ENTER) {
 					sendMessage();
 				}
 			}
 		});
-		
+
 		// Pannel
 		pannel.setBackground(Color.LIGHT_GRAY);
 		pannel.add(textField);
@@ -75,8 +91,8 @@ public class ChatWindowSwing {
 		// TextArea
 		textArea.setEditable(false);
 		pannel2.add(BorderLayout.CENTER, textArea);
-		userArea.setEditable(false);
-		pannel2.add(BorderLayout.EAST, userArea);
+		// userArea.setEditable(false);
+		pannel2.add(BorderLayout.EAST, userList);
 		frame.add(BorderLayout.CENTER, pannel2);
 
 		// Frame
@@ -87,15 +103,16 @@ public class ChatWindowSwing {
 		});
 		frame.setVisible(true);
 		frame.pack();
-		
+
 		new ChatClientThread(br).start();
 	}
-	
+
 	private void finish() {
 		// quit protocol 구현
 		pw.println("QUIT"); // br 쓰레드 정리
 		System.exit(0);
 	}
+
 	private void sendMessage() {
 		String message = textField.getText();
 
@@ -110,30 +127,32 @@ public class ChatWindowSwing {
 			String msg = "MESSAGE:" + encodedString;
 			pw.println(msg);
 		}
-		
+
 		textField.setText("");
 		textField.requestFocus();
 	}
-	
+
 	private void updateTextArea(String message) {
 		textArea.append(message);
 		textArea.append("\n");
 	}
-	
+
 	public class ChatClientThread extends Thread {
 		private BufferedReader bufferedReader;
-		
+
 		public ChatClientThread(BufferedReader bufferedReader) {
 			this.bufferedReader = bufferedReader;
 		}
-		
+
 		@Override
 		public void run() {
 			/* reader를 통해 읽은 데이터 콘솔에 출력하기 (message 처리) */
 			try {
 				while (true) {
 					String data = bufferedReader.readLine();
-					if (data.equals("")) {
+					if (data == null) {
+						break;
+					} else if (data.equals("")) {
 						break;
 					} else {
 						updateTextArea(data);
@@ -142,6 +161,7 @@ public class ChatWindowSwing {
 			} catch (IOException e) {
 				System.out.println("error:" + e);
 			}
+			System.exit(0);
 		}
 	}
 
