@@ -70,7 +70,6 @@ public class ChatClient {
 			try {
 				if (socket != null && !socket.isClosed()) {
 					socket.close();
-					System.out.println("메인 소켓닫힘");
 				}
 				if (scanner != null) {
 					scanner.close();
