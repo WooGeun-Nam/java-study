@@ -37,19 +37,21 @@ public class ChatClient {
 			pw.flush();
 
 			// 6. ChatClientReceiveThread 시작
-			new ChatClientThread(socket, br).start();
-			
+			new ChatClientThread(br).start();
+
 			// 키보드 입력처리
 			while (true) {
-				//System.out.print(">>");
+				System.out.print(">>");
 				String line = scanner.nextLine();
 				if (line == "") {
 					System.out.println("잘못 입력하셨습니다.");
 					continue;
 				}
 				if ("quit".equals(line)) {
-					//String msg = "QUIT";
-					//pw.println(msg);
+					String msg = "QUIT";
+					pw.println(msg);
+					System.out.println("quit 보냄");
+					//thread.join();
 					break;
 				} else {
 					// 메시지 처리
@@ -67,8 +69,8 @@ public class ChatClient {
 		} finally {
 			try {
 				if (socket != null && !socket.isClosed()) {
-					ChatClientThread.interrupted();
 					socket.close();
+					System.out.println("메인 소켓닫힘");
 				}
 				if (scanner != null) {
 					scanner.close();

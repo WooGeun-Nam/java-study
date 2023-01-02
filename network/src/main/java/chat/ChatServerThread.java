@@ -28,7 +28,7 @@ public class ChatServerThread extends Thread {
 
 			while (true) {
 				String request = br.readLine();
-				if (request == null) {
+				if (request.equals(null)) {
 					// 수정필요
 					doQuit(pw);
 					break;
@@ -60,18 +60,20 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	private void doJoin(String name, Writer writer) {
+	private void doJoin(String name, PrintWriter writer) {
 		this.name = name;
 
-		String data = name + "님이 참여하였습니다.";
+		String data = name + "님이 참여하였습니다." + "\n>>";
 		broadcast(data, writer);
 
 		/* writer pool에 저장 */
 		addWriter(writer);
-
+		
+		System.out.println(name+":JOIN:OK");
+		writer.println("JOIN:OK\n>>");
 		// ack
-		//writer.println("join:ok");
-		//writer.flush();
+		// writer.println("join:ok");
+		// writer.flush();
 	}
 
 	private void doMessage(String message, PrintWriter pw) {
@@ -79,17 +81,19 @@ public class ChatServerThread extends Thread {
 		// 디코딩
 		byte[] decodedBytes = Base64.getDecoder().decode(message);
 		String decodedString = new String(decodedBytes);
-		
+
 		// 사용자 이름과 함께 전송
-		String sendMsg = name + ":" +"\""+ decodedString+"\"";
+		String sendMsg = name + ":" + decodedString + "\n>>";
 		broadcast(sendMsg, pw);
 	}
 
-	private void doQuit(Writer writer) {
+	private void doQuit(PrintWriter writer) {
 		removeWriter(writer);
-
-		String data = name + "님이 퇴장 하였습니다.";
+		
+		String data = name + "님이 퇴장 하였습니다." + "\n>>";
 		broadcast(data, writer);
+
+		writer.println();
 	}
 
 	private void removeWriter(Writer writer) {
@@ -109,8 +113,8 @@ public class ChatServerThread extends Thread {
 
 		synchronized (listWriters) {
 			for (Writer writer : listWriters) {
-				PrintWriter printWriter = (PrintWriter)writer;
-				if(pw != printWriter) {
+				PrintWriter printWriter = (PrintWriter) writer;
+				if (pw != printWriter) {
 					printWriter.println(data);
 					printWriter.flush();
 				}

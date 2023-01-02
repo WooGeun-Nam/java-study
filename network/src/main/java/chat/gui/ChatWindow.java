@@ -33,6 +33,7 @@ public class ChatWindow {
 		// Button
 		buttonSend.setBackground(Color.GRAY);
 		buttonSend.setForeground(Color.WHITE);
+		// 옵저버 패턴
 		buttonSend.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed( ActionEvent actionEvent ) {
@@ -42,7 +43,7 @@ public class ChatWindow {
 
 		// Textfield
 		textField.setColumns(80);
-
+		
 		// Pannel
 		pannel.setBackground(Color.LIGHT_GRAY);
 		pannel.add(textField);
@@ -64,5 +65,10 @@ public class ChatWindow {
 	}
 	
 	private void sendMessage() {
+		String message = textField.getText();
+		System.out.println("메세지 보내는 프로토콜 구현!!:"+message);
+		
+		textField.setText("");
+		textField.requestFocus();
 	}
 }
