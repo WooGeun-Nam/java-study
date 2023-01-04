@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Base64;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -29,7 +28,7 @@ public class ChatWindowSwing {
 	private JButton buttonSend;
 	private JTextField textField;
 	private JTextArea textArea;
-	private JList userList;
+	private JList<String> userList;
 	private PrintWriter pw;
 	private BufferedReader br;
 
@@ -37,7 +36,7 @@ public class ChatWindowSwing {
 		frame = new JFrame(name);
 		pannel = new JPanel();
 		pannel2 = new JPanel();
-		buttonSend = new JButton("Send");
+		buttonSend = new JButton("전송");
 		textField = new JTextField();
 		textArea = new JTextArea(30, 70);
 		this.pw = pw;
@@ -57,7 +56,7 @@ public class ChatWindowSwing {
 			System.out.println("사용자데이터를 불러오지 못함");
 		}
 		
-		userList = new JList(users);
+		userList = new JList<String>(users);
 
 		// Button
 		buttonSend.setBackground(Color.GRAY);
@@ -124,7 +123,7 @@ public class ChatWindowSwing {
 			// 인코딩
 			String encodedString = Base64.getEncoder().encodeToString(message.getBytes());
 			// 프로토콜과 함께 담아서 전송
-			String msg = "MESSAGE:" + encodedString;
+			String msg = "MESSAGE#" + encodedString;
 			pw.println(msg);
 		}
 
@@ -151,17 +150,27 @@ public class ChatWindowSwing {
 				while (true) {
 					String data = bufferedReader.readLine();
 					if (data == null) {
-						break;
+						updateTextArea("서버와 연결이 종료되었습니다.");
+						updateTextArea("잠시후 시스템이 종료됩니다.");
+						Thread.sleep(5000);
+						System.exit(0);
 					} else if (data.equals("")) {
 						break;
 					} else {
 						updateTextArea(data);
 					}
 				}
+			} catch (InterruptedException e) {
+				System.out.println("error:" + e);
 			} catch (IOException e) {
 				System.out.println("error:" + e);
+			} finally {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			System.exit(0);
 		}
 	}
 

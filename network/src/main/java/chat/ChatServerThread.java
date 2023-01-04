@@ -33,7 +33,7 @@ public class ChatServerThread extends Thread {
 					break;
 				}
 				// 프로토콜 처리 -> split
-				String[] tokens = request.split(":");
+				String[] tokens = request.split("#");
 				if ("CHECK".equals(tokens[0])) {
 					nameCheck(tokens[1], pw);
 				} else if ("JOIN".equals(tokens[0])) {
@@ -103,9 +103,10 @@ public class ChatServerThread extends Thread {
 		// 디코딩
 		byte[] decodedBytes = Base64.getDecoder().decode(message);
 		String decodedString = new String(decodedBytes);
-
 		// 사용자 이름과 함께 전송
 		String sendMsg = user.getName() + ":" + decodedString;
+		
+		//String sendMsg = Base64.getEncoder().encodeToString((user.getName() + ":").getBytes()) + message;
 		broadcast(sendMsg);
 	}
 
@@ -130,6 +131,7 @@ public class ChatServerThread extends Thread {
 	}
 
 	private void broadcast(String data) {
+		
 		synchronized (listUser) {
 			for (User user : listUser) {
 				PrintWriter printWriter = (PrintWriter) user.getWriter();

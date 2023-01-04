@@ -15,6 +15,7 @@ public class ChatClient {
 
 	public static void main(String[] args) {
 		Socket socket = null;
+		String name = null;
 		Scanner scanner = null;
 		try {
 			// 1. 키보드 연결
@@ -31,10 +32,23 @@ public class ChatClient {
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 
-			System.out.print("닉네임>>");
-			String name = scanner.nextLine();
-			pw.println("JOIN:" + name);
-			pw.flush();
+			// 4. join protocol
+			while (true) {
+				System.out.print("닉네임>>");
+				name = scanner.nextLine();
+				if (!name.isEmpty() || name.contains("#")) {
+					pw.println("CHECK#" + name);
+					String data = br.readLine();
+					if("PASS".equals(data)) {
+						pw.println("JOIN#" + name);
+						break;
+					} else {
+						System.out.println("중복되는 대화명이 존재합니다.\n");
+						continue;
+					}
+				}
+				System.out.println("정확하지 않은 입력입니다. 또는 불가능한 문자(#)가 포함되었 습니다.\n");
+			}
 
 			// 6. ChatClientReceiveThread 시작
 			new ChatClientThread(br).start();
@@ -56,7 +70,7 @@ public class ChatClient {
 					// 인코딩
 					String encodedString = Base64.getEncoder().encodeToString(line.getBytes());
 					// 프로토콜과 함께 담아서 전송
-					String msg = "MESSAGE:" + encodedString;
+					String msg = "MESSAGE#" + encodedString;
 					pw.println(msg);
 				}
 			}

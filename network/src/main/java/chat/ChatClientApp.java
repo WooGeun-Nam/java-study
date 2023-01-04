@@ -17,7 +17,6 @@ public class ChatClientApp {
 		Scanner scanner = new Scanner(System.in);
 
 		try {
-
 			// 1. create socket
 			socket = new Socket();
 
@@ -33,43 +32,43 @@ public class ChatClientApp {
 			while (true) {
 				System.out.print("닉네임>>");
 				name = scanner.nextLine();
-				if (!name.isEmpty()) {
-					pw.println("CHECK:" + name);
+				if (!name.isEmpty() || name.contains("#")) {
+					pw.println("CHECK#" + name);
 					String data = br.readLine();
 					if("PASS".equals(data)) {
-						pw.println("JOIN:" + name);
-						pw.flush();
+						pw.println("JOIN#" + name);
 						break;
 					} else {
 						System.out.println("중복되는 대화명이 존재합니다.\n");
 						continue;
 					}
 				}
-				System.out.println("대화명은 한글자 이상 입력해야 합니다.\n");
+				System.out.println("정확하지 않은 입력입니다. 또는 불가능한 문자(#)가 포함되었 습니다.\n");
 			}
 			
 			new ChatWindowSwing(name,pw,br).show();
 			
-			while(true) {
-				if(socket.isClosed()) {
-					break;
-				}
-			}
+//			while(true) {
+//				if(socket.isClosed()) {
+//					break;
+//				}
+//			}
 			
 		} catch (IOException e) {
 			log("error:" + e);
-		} finally {
-			try {
-				if (socket != null && !socket.isClosed()) {
-					socket.close();
-				}
-				if (scanner != null) {
-					scanner.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		} 
+//		finally {
+//			try {
+//				if (socket != null && !socket.isClosed()) {
+//					socket.close();
+//				}
+//				if (scanner != null) {
+//					scanner.close();
+//				}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	private static void log(String message) {

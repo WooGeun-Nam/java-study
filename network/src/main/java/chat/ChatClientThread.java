@@ -17,15 +17,18 @@ public class ChatClientThread extends Thread {
 			while (true) {
 				String data = bufferedReader.readLine();
 				
-				if (data.equals("")) {
+				if (data == null) {
+					break;
+				} else if (data.equals("")) {
 					break;
 				} else {
 					System.out.println(data);
 				}
 			}
 		} catch (IOException e) {
-			// 소켓이 안닫힌상태에서 종료되서 여기서 예외발생 해결해야함
 			System.out.println("error:" + e);
+		} finally {
+			System.exit(0);
 		}
 	}
 }
