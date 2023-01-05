@@ -30,7 +30,10 @@ public class ChatClientApp {
 
 			// 4. join protocol
 			while (true) {
-				System.out.print("닉네임>>");
+				System.out
+				
+				
+				.print("닉네임>>");
 				name = scanner.nextLine();
 				if (!name.isEmpty() && !name.contains("#")) {
 					pw.println("CHECK#" + name);

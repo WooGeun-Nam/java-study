@@ -29,6 +29,7 @@ public class ChatServerThread extends Thread {
 				if (request == null) {
 					// 수정필요
 					if (user != null) {
+						pw.println("");
 						doQuit(pw);
 					}
 					break;
@@ -45,6 +46,8 @@ public class ChatServerThread extends Thread {
 					doMessage(tokens[1], pw);
 				} else if ("QUIT".equals(tokens[0])) {
 					pw.println("");
+					doQuit(pw);
+					break;
 				} else if ("ERROR".equals(tokens[0])) {
 					clientLog(tokens[1]);
 				} else if ("WHISPER".equals(tokens[0])) {
