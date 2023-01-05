@@ -22,7 +22,7 @@ public class ChatClientApp {
 
 			// 2. connect to server
 			socket.connect(new InetSocketAddress(ChatServer.SERVER_IP, ChatServer.PORT));
-			log("connected");
+			System.out.println("[CONNECT:ACCEPT]");
 
 			// 3. get iostream
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
@@ -32,7 +32,7 @@ public class ChatClientApp {
 			while (true) {
 				System.out.print("닉네임>>");
 				name = scanner.nextLine();
-				if (!name.isEmpty() || name.contains("#")) {
+				if (!name.isEmpty() && !name.contains("#")) {
 					pw.println("CHECK#" + name);
 					String data = br.readLine();
 					if("PASS".equals(data)) {
@@ -48,30 +48,8 @@ public class ChatClientApp {
 			
 			new ChatWindowSwing(name,pw,br).show();
 			
-//			while(true) {
-//				if(socket.isClosed()) {
-//					break;
-//				}
-//			}
-			
 		} catch (IOException e) {
-			log("error:" + e);
+			System.out.println("ERROR#[Main]"+e);
 		} 
-//		finally {
-//			try {
-//				if (socket != null && !socket.isClosed()) {
-//					socket.close();
-//				}
-//				if (scanner != null) {
-//					scanner.close();
-//				}
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-	}
-
-	private static void log(String message) {
-		System.out.println("[Client] " + message);
 	}
 }

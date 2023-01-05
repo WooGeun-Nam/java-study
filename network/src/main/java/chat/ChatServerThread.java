@@ -29,7 +29,9 @@ public class ChatServerThread extends Thread {
 				String request = br.readLine();
 				if (request == null) {
 					// 수정필요
-					doQuit(pw);
+					if(user!=null) {
+						doQuit(pw);
+					}
 					break;
 				}
 				// 프로토콜 처리 -> split
@@ -44,20 +46,40 @@ public class ChatServerThread extends Thread {
 					doMessage(tokens[1], pw);
 				} else if ("QUIT".equals(tokens[0])) {
 					pw.println("");
-				} else {
-					ChatServer.log("알수없는 메소드");
+				} else if ("ERROR".equals(tokens[0])) {
+					clientLog(tokens[1]);
+				} else if("WHISPER".equals(tokens[0])){
+					System.out.println(request);
+					doWhisper(tokens[1],tokens[2]);
+				}else {
+					serverLog("ProtocolError:"+tokens[0]);
 				}
 			}
 
 		} catch (IOException e) {
-			log("error:" + e);
+			serverLog("Error:" + e);
 		} finally {
 			try {
 				if (socket != null && !socket.isClosed()) {
 					socket.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				serverLog("Error:" + e);
+			}
+		}
+	}
+
+	private void doWhisper(String rcvName, String message) {
+		byte[] decodedBytes = Base64.getDecoder().decode(message);
+		String decodedString = new String(decodedBytes);
+		// 사용자 이름과 함께 전송
+		String sendMsg = user.getName() + ":" + decodedString;
+		synchronized (listUser) {
+			for (User user : listUser) {
+				if(user.getName().equals(rcvName)) {
+					PrintWriter printWriter = (PrintWriter) user.getWriter();
+					printWriter.println(sendMsg);
+				}
 			}
 		}
 	}
@@ -111,9 +133,10 @@ public class ChatServerThread extends Thread {
 	}
 
 	private void doQuit(PrintWriter writer) {
+		String name= this.user.getName();
 		removeWriter(user);
 
-		String data = user.getName() + "님이 퇴장 하였습니다.";
+		String data = name + "님이 퇴장 하였습니다.";
 
 		broadcast(data);
 	}
@@ -131,7 +154,6 @@ public class ChatServerThread extends Thread {
 	}
 
 	private void broadcast(String data) {
-		
 		synchronized (listUser) {
 			for (User user : listUser) {
 				PrintWriter printWriter = (PrintWriter) user.getWriter();
@@ -141,7 +163,11 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	public void log(String message) {
-		System.out.println("[Server][" + getId() + "] " + message);
+	public void clientLog(String message) {
+		System.out.println("[Client][" + user.getName() + "]" + message);
+	}
+	
+	public void serverLog(String message) {
+		System.out.println("[Server][" + user.getName() + "]" + message);
 	}
 }

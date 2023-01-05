@@ -26,7 +26,7 @@ public class ChatClientThread extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("error:" + e);
+			System.out.println("Error:" + e);
 		} finally {
 			System.exit(0);
 		}

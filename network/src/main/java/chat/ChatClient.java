@@ -17,6 +17,8 @@ public class ChatClient {
 		Socket socket = null;
 		String name = null;
 		Scanner scanner = null;
+		PrintWriter pw = null;
+		BufferedReader br = null;
 		try {
 			// 1. 키보드 연결
 			scanner = new Scanner(System.in);
@@ -26,11 +28,11 @@ public class ChatClient {
 
 			// 3. 연결
 			socket.connect(new InetSocketAddress(ChatServer.SERVER_IP, ChatServer.PORT));
-			log("connected");
+			System.out.println("채팅서버와 연결 되었습니다.");
 
 			// 4. reader/writer
-			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
+			br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 
 			// 4. join protocol
 			while (true) {
@@ -75,7 +77,7 @@ public class ChatClient {
 				}
 			}
 		} catch (IOException e) {
-			log("error:" + e);
+			pw.println("ERROR#[Main]" + e);
 		} finally {
 			try {
 				if (socket != null && !socket.isClosed()) {
@@ -85,13 +87,8 @@ public class ChatClient {
 					scanner.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				pw.println("ERROR#[Main]" + e);
 			}
 		}
 	}
-
-	private static void log(String message) {
-		System.out.println("[Client] " + message);
-	}
-
 }

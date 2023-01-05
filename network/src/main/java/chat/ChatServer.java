@@ -29,22 +29,22 @@ public class ChatServer {
 			}
 			
 		} catch (SocketException e) {
-			log("suddenly closed by client"+e);
+			log("Suddenly Closed by Client"+e);
 		} catch (IOException e) {
-			log("error:" + e);
+			log("Error:" + e);
 		} finally {
 			try {
 				if (serverSocket != null && !serverSocket.isClosed()) {
 					serverSocket.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				log("Error:"+e);
 			}
 		}
 	}
 	
 	public static void log(String message) {
-		System.out.println("[Server]" + message);
+		System.out.println("[MainServer]" + message);
 	}
 
 }

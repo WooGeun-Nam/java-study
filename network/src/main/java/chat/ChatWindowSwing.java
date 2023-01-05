@@ -16,6 +16,7 @@ import java.util.Base64;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -39,24 +40,14 @@ public class ChatWindowSwing {
 		buttonSend = new JButton("전송");
 		textField = new JTextField();
 		textArea = new JTextArea(30, 70);
+		userList = new JList<String>();
 		this.pw = pw;
 		this.br = br;
 	}
 
 	public void show() {
 		// 사용자 받아오기
-		String[] users = null;
-		pw.println("LIST");
-		try {
-			String request = br.readLine();
-			if(request != null) {
-				users = request.split(",");
-			}
-		} catch (IOException e) {
-			System.out.println("사용자데이터를 불러오지 못함");
-		}
-		
-		userList = new JList<String>(users);
+		listRefresh();
 
 		// Button
 		buttonSend.setBackground(Color.GRAY);
@@ -103,32 +94,71 @@ public class ChatWindowSwing {
 		frame.setVisible(true);
 		frame.pack();
 
+		updateTextArea("접속을 환영합니다 도움말은 \"/?\" 입니다.");
 		new ChatClientThread(br).start();
 	}
 
 	private void finish() {
 		// quit protocol 구현
-		pw.println("QUIT"); // br 쓰레드 정리
+		pw.println("QUIT"); // Thread먼저 정리
 		System.exit(0);
 	}
 
 	private void sendMessage() {
 		String message = textField.getText();
 
-		if (message == "") {
-		} else if ("quit".equals(message)) {
-			finish();
-		} else {
-			// 메시지 처리
+		// 명령어 인지 확인
+		String bash = message.substring(0, 1);
+		String cmd = null;
+		String msg = null;
+		if (message.equals("/")) {
+			JOptionPane.showMessageDialog(frame, "잘못된 명령어 입니다.\n");
+		} else if (bash.equals("/") ) {
+			cmd = message.substring(1, 2);
+			msg = message.substring(2);
+			if (cmd.equals("?")) {
+				JOptionPane.showMessageDialog(frame, "/c : 채팅기록 지우기, [리스트에서 대상선택후] /w : 귓속말, /q : 나가기\n");
+				//textArea.append("/c : 채팅기록 지우기, [리스트에서 대상선택후] /w : 귓속말, /q : 나가기\n");
+			} else if (cmd.equals("c")) {
+				textArea.selectAll();
+				textArea.replaceSelection("");
+			} else if (cmd.equals("w") && message.length()>2) {
+				if(userList.getSelectedValue()!=null) {
+					String encodedString = Base64.getEncoder().encodeToString(msg.getBytes());
+					String response = "WHISPER#"+userList.getSelectedValue()+"#"+encodedString;
+					pw.println(response);
+				} else {
+					JOptionPane.showMessageDialog(frame, "대상자를 선택해 주세요.\n");
+				}
+			} else if (cmd.equals("q")) {
+				finish();
+			} else {
+				JOptionPane.showMessageDialog(frame, "잘못된 명령어 입니다.\n");
+			}
+		} else if (!message.equals("")) {
 			// 인코딩
 			String encodedString = Base64.getEncoder().encodeToString(message.getBytes());
 			// 프로토콜과 함께 담아서 전송
-			String msg = "MESSAGE#" + encodedString;
-			pw.println(msg);
+			String response = "MESSAGE#" + encodedString;
+			pw.println(response);
 		}
-
 		textField.setText("");
 		textField.requestFocus();
+	}
+
+	private void listRefresh() {
+		String[] users = null;
+		pw.println("LIST");
+		try {
+			String request = br.readLine();
+			if (request != null) {
+				users = request.split(",");
+			}
+		} catch (IOException e) {
+			System.out.println("사용자데이터를 불러오지 못함");
+			pw.println("ERROR#[사용자호출]" + e);
+		}
+		userList.setListData(users);
 	}
 
 	private void updateTextArea(String message) {
@@ -159,19 +189,13 @@ public class ChatWindowSwing {
 					} else {
 						updateTextArea(data);
 					}
+					listRefresh();
 				}
 			} catch (InterruptedException e) {
-				System.out.println("error:" + e);
+				pw.println("ERROR#[ThreadSleep]" + e);
 			} catch (IOException e) {
-				System.out.println("error:" + e);
-			} finally {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				pw.println("ERROR#[Thread]" + e);
 			}
 		}
 	}
-
 }
