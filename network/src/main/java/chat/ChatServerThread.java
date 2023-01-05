@@ -72,7 +72,7 @@ public class ChatServerThread extends Thread {
 
 	private void doWhisper(String rcvName, String message) {
 		// 사용자 이름과 함께 전송
-		String sendMsg = "DECODE#" + user.getName() + "#" + message;
+		String sendMsg = "DECODE#" + user.getName()+"님이 보낸 귓속말" + "#" + message;
 		synchronized (listUser) {
 			for (User user : listUser) {
 				if (user.getName().equals(rcvName)) {
