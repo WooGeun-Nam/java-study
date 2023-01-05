@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.Base64;
 import java.util.List;
@@ -22,14 +23,14 @@ public class ChatServerThread extends Thread {
 	@Override
 	public void run() {
 		try {
-			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 
 			while (true) {
 				String request = br.readLine();
 				if (request == null) {
 					// 수정필요
-					if(user!=null) {
+					if (user != null) {
 						doQuit(pw);
 					}
 					break;
@@ -43,16 +44,24 @@ public class ChatServerThread extends Thread {
 				} else if ("LIST".equals(tokens[0])) {
 					responseUserList(pw);
 				} else if ("MESSAGE".equals(tokens[0])) {
-					doMessage(tokens[1], pw);
+					try {
+						doMessage(tokens[1], pw);
+					} catch (Exception e) {
+						serverLog("ERROR#[UTF]:" + tokens[0]);
+					}
 				} else if ("QUIT".equals(tokens[0])) {
 					pw.println("");
 				} else if ("ERROR".equals(tokens[0])) {
 					clientLog(tokens[1]);
-				} else if("WHISPER".equals(tokens[0])){
+				} else if ("WHISPER".equals(tokens[0])) {
 					System.out.println(request);
-					doWhisper(tokens[1],tokens[2]);
-				}else {
-					serverLog("ProtocolError:"+tokens[0]);
+					try {
+						doWhisper(tokens[1], tokens[2]);
+					} catch (Exception e) {
+						serverLog("ERROR#[UTF]:" + tokens[0]);
+					}
+				} else {
+					serverLog("ProtocolError:" + tokens[0]);
 				}
 			}
 
@@ -69,14 +78,21 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	private void doWhisper(String rcvName, String message) {
+	private void doWhisper(String rcvName, String message) throws Exception {
+
 		byte[] decodedBytes = Base64.getDecoder().decode(message);
-		String decodedString = new String(decodedBytes);
+		String decodedString = null;
+		try {
+			decodedString = new String(decodedBytes, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
 		// 사용자 이름과 함께 전송
 		String sendMsg = user.getName() + ":" + decodedString;
 		synchronized (listUser) {
 			for (User user : listUser) {
-				if(user.getName().equals(rcvName)) {
+				if (user.getName().equals(rcvName)) {
 					PrintWriter printWriter = (PrintWriter) user.getWriter();
 					printWriter.println(sendMsg);
 				}
@@ -114,26 +130,27 @@ public class ChatServerThread extends Thread {
 		String response = "";
 		synchronized (listUser) {
 			for (User user : listUser) {
-				response += user.getName()+",";
+				response += user.getName() + ",";
 			}
 		}
 		pw.println(response);
 	}
-	
-	private void doMessage(String message, PrintWriter pw) {
+
+	private void doMessage(String message, PrintWriter pw) throws Exception {
 		/* 잘 구현 해 보기 */
 		// 디코딩
 		byte[] decodedBytes = Base64.getDecoder().decode(message);
-		String decodedString = new String(decodedBytes);
+		String decodedString = new String(decodedBytes, "utf-8");
 		// 사용자 이름과 함께 전송
 		String sendMsg = user.getName() + ":" + decodedString;
-		
-		//String sendMsg = Base64.getEncoder().encodeToString((user.getName() + ":").getBytes()) + message;
+
+		// String sendMsg = Base64.getEncoder().encodeToString((user.getName() +
+		// ":").getBytes()) + message;
 		broadcast(sendMsg);
 	}
 
 	private void doQuit(PrintWriter writer) {
-		String name= this.user.getName();
+		String name = this.user.getName();
 		removeWriter(user);
 
 		String data = name + "님이 퇴장 하였습니다.";
@@ -166,7 +183,7 @@ public class ChatServerThread extends Thread {
 	public void clientLog(String message) {
 		System.out.println("[Client][" + user.getName() + "]" + message);
 	}
-	
+
 	public void serverLog(String message) {
 		System.out.println("[Server][" + user.getName() + "]" + message);
 	}

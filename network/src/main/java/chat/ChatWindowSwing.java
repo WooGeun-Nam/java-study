@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import javax.swing.JButton;
@@ -56,7 +57,11 @@ public class ChatWindowSwing {
 		buttonSend.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-				sendMessage();
+				try {
+					sendMessage();
+				} catch (Exception e) {
+					pw.println("ERROR#[UTF]" + e);
+				}
 			}
 		});
 
@@ -67,7 +72,11 @@ public class ChatWindowSwing {
 			public void keyPressed(KeyEvent e) {
 				char keyCode = e.getKeyChar();
 				if (keyCode == KeyEvent.VK_ENTER) {
-					sendMessage();
+					try {
+						sendMessage();
+					} catch (Exception e1) {
+						pw.println("ERROR#[UTF]" + e);
+					}
 				}
 			}
 		});
@@ -104,7 +113,7 @@ public class ChatWindowSwing {
 		System.exit(0);
 	}
 
-	private void sendMessage() {
+	private void sendMessage() throws Exception {
 		String message = textField.getText();
 
 		// 명령어 인지 확인
@@ -113,19 +122,19 @@ public class ChatWindowSwing {
 		String msg = null;
 		if (message.equals("/")) {
 			JOptionPane.showMessageDialog(frame, "잘못된 명령어 입니다.\n");
-		} else if (bash.equals("/") ) {
+		} else if (bash.equals("/")) {
 			cmd = message.substring(1, 2);
 			msg = message.substring(2);
 			if (cmd.equals("?")) {
 				JOptionPane.showMessageDialog(frame, "/c : 채팅기록 지우기, [리스트에서 대상선택후] /w : 귓속말, /q : 나가기\n");
-				//textArea.append("/c : 채팅기록 지우기, [리스트에서 대상선택후] /w : 귓속말, /q : 나가기\n");
+				// textArea.append("/c : 채팅기록 지우기, [리스트에서 대상선택후] /w : 귓속말, /q : 나가기\n");
 			} else if (cmd.equals("c")) {
 				textArea.selectAll();
 				textArea.replaceSelection("");
-			} else if (cmd.equals("w") && message.length()>2) {
-				if(userList.getSelectedValue()!=null) {
-					String encodedString = Base64.getEncoder().encodeToString(msg.getBytes());
-					String response = "WHISPER#"+userList.getSelectedValue()+"#"+encodedString;
+			} else if (cmd.equals("w") && message.length() > 2) {
+				if (userList.getSelectedValue() != null) {
+					String encodedString = Base64.getEncoder().encodeToString(msg.getBytes("utf-8"));
+					String response = "WHISPER#" + userList.getSelectedValue() + "#" + encodedString;
 					pw.println(response);
 				} else {
 					JOptionPane.showMessageDialog(frame, "대상자를 선택해 주세요.\n");
@@ -137,7 +146,7 @@ public class ChatWindowSwing {
 			}
 		} else if (!message.equals("")) {
 			// 인코딩
-			String encodedString = Base64.getEncoder().encodeToString(message.getBytes());
+			String encodedString = Base64.getEncoder().encodeToString(message.getBytes("utf-8"));
 			// 프로토콜과 함께 담아서 전송
 			String response = "MESSAGE#" + encodedString;
 			pw.println(response);
@@ -187,6 +196,7 @@ public class ChatWindowSwing {
 					} else if (data.equals("")) {
 						break;
 					} else {
+
 						updateTextArea(data);
 					}
 					listRefresh();

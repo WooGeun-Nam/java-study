@@ -70,7 +70,7 @@ public class ChatClient {
 				} else {
 					// 메시지 처리
 					// 인코딩
-					String encodedString = Base64.getEncoder().encodeToString(line.getBytes());
+					String encodedString = Base64.getEncoder().encodeToString(line.getBytes("utf-8"));
 					// 프로토콜과 함께 담아서 전송
 					String msg = "MESSAGE#" + encodedString;
 					pw.println(msg);
