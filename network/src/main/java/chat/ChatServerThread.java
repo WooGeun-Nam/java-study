@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.util.Base64;
 import java.util.List;
 
 public class ChatServerThread extends Thread {
@@ -44,22 +42,13 @@ public class ChatServerThread extends Thread {
 				} else if ("LIST".equals(tokens[0])) {
 					responseUserList(pw);
 				} else if ("MESSAGE".equals(tokens[0])) {
-					try {
-						doMessage(tokens[1], pw);
-					} catch (Exception e) {
-						serverLog("ERROR#[UTF]:" + tokens[0]);
-					}
+					doMessage(tokens[1], pw);
 				} else if ("QUIT".equals(tokens[0])) {
 					pw.println("");
 				} else if ("ERROR".equals(tokens[0])) {
 					clientLog(tokens[1]);
 				} else if ("WHISPER".equals(tokens[0])) {
-					System.out.println(request);
-					try {
-						doWhisper(tokens[1], tokens[2]);
-					} catch (Exception e) {
-						serverLog("ERROR#[UTF]:" + tokens[0]);
-					}
+					doWhisper(tokens[1], tokens[2]);
 				} else {
 					serverLog("ProtocolError:" + tokens[0]);
 				}
@@ -78,18 +67,9 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	private void doWhisper(String rcvName, String message) throws Exception {
-
-		byte[] decodedBytes = Base64.getDecoder().decode(message);
-		String decodedString = null;
-		try {
-			decodedString = new String(decodedBytes, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
+	private void doWhisper(String rcvName, String message) {
 		// 사용자 이름과 함께 전송
-		String sendMsg = user.getName() + ":" + decodedString;
+		String sendMsg = "DECODE#" + user.getName() + "#" + message;
 		synchronized (listUser) {
 			for (User user : listUser) {
 				if (user.getName().equals(rcvName)) {
@@ -136,13 +116,9 @@ public class ChatServerThread extends Thread {
 		pw.println(response);
 	}
 
-	private void doMessage(String message, PrintWriter pw) throws Exception {
-		/* 잘 구현 해 보기 */
-		// 디코딩
-		byte[] decodedBytes = Base64.getDecoder().decode(message);
-		String decodedString = new String(decodedBytes, "utf-8");
+	private void doMessage(String message, PrintWriter pw) {
 		// 사용자 이름과 함께 전송
-		String sendMsg = user.getName() + ":" + decodedString;
+		String sendMsg = "DECODE#" + user.getName() + "#" + message;
 
 		// String sendMsg = Base64.getEncoder().encodeToString((user.getName() +
 		// ":").getBytes()) + message;

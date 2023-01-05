@@ -2,6 +2,7 @@ package chat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Base64;
 
 public class ChatClientThread extends Thread {
 	private BufferedReader bufferedReader;
@@ -22,6 +23,13 @@ public class ChatClientThread extends Thread {
 				} else if (data.equals("")) {
 					break;
 				} else {
+					String[] tokens = data.split("#");
+					if (tokens[0].equals("DECODE")) {
+						byte[] decodedBytes = Base64.getDecoder().decode(tokens[2]);
+						String decodedString = new String(decodedBytes, "utf-8");
+
+						data = tokens[1] + ":" + decodedString;
+					}
 					System.out.println(data);
 				}
 			}

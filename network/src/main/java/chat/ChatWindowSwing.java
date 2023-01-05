@@ -11,7 +11,6 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import javax.swing.JButton;
@@ -196,7 +195,13 @@ public class ChatWindowSwing {
 					} else if (data.equals("")) {
 						break;
 					} else {
+						String[] tokens = data.split("#");
+						if (tokens[0].equals("DECODE")) {
+							byte[] decodedBytes = Base64.getDecoder().decode(tokens[2]);
+							String decodedString = new String(decodedBytes, "utf-8");
 
+							data = tokens[1] + ":" + decodedString;
+						}
 						updateTextArea(data);
 					}
 					listRefresh();

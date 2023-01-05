@@ -7,7 +7,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Base64;
 import java.util.Scanner;
 
@@ -54,7 +53,7 @@ public class ChatClient {
 
 			// 6. ChatClientReceiveThread 시작
 			new ChatClientThread(br).start();
-
+			System.out.println("환영합니다. 퇴장명령어는 quit 입니다.");
 			// 키보드 입력처리
 			while (true) {
 				System.out.print(">>");
