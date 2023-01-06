@@ -30,15 +30,12 @@ public class ChatClientApp {
 
 			// 4. join protocol
 			while (true) {
-				System.out
-				
-				
-				.print("닉네임>>");
+				System.out.print("닉네임>>");
 				name = scanner.nextLine();
 				if (!name.isEmpty() && !name.contains("#")) {
 					pw.println("CHECK#" + name);
 					String data = br.readLine();
-					if("PASS".equals(data)) {
+					if ("PASS".equals(data)) {
 						pw.println("JOIN#" + name);
 						break;
 					} else {
@@ -48,11 +45,11 @@ public class ChatClientApp {
 				}
 				System.out.println("정확하지 않은 입력입니다. 또는 불가능한 문자(#)가 포함되었 습니다.\n");
 			}
-			
-			new ChatWindowSwing(name,pw,br).show();
-			
+
+			new ChatWindow(name, pw, br).show();
+
 		} catch (IOException e) {
-			System.out.println("ERROR#[Main]"+e);
-		} 
+			System.out.println("ERROR#[Main]" + e);
+		}
 	}
 }
