@@ -52,6 +52,10 @@ public class ChatServerThread extends Thread {
 					clientLog(tokens[1]);
 				} else if ("WHISPER".equals(tokens[0])) {
 					doWhisper(tokens[1], tokens[2]);
+				} else if ("KICK".equals(tokens[0])) {
+					doKick(tokens[1], pw);
+				} else if ("NOTI".equals(tokens[0])) {
+					doNoti(tokens[1], pw);
 				} else {
 					serverLog("ProtocolError:" + tokens[0]);
 				}
@@ -70,9 +74,33 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
+	private void doNoti(String msg, PrintWriter pw) {
+		if (user.isAdmin()) {
+			broadcast("NOTI#" + msg);
+		} else {
+			pw.println("SYS#관리자가 아닙니다.");
+		}
+
+	}
+
+	private void doKick(String rcvName, PrintWriter pw) {
+		if (user.isAdmin()) {
+			synchronized (listUser) {
+				for (User user : listUser) {
+					if (user.getName().equals(rcvName)) {
+						PrintWriter printWriter = (PrintWriter) user.getWriter();
+						printWriter.println("EXIT#");
+					}
+				}
+			}
+		} else {
+			pw.println("SYS#관리자가 아닙니다.");
+		}
+	}
+
 	private void doWhisper(String rcvName, String message) {
 		// 사용자 이름과 함께 전송
-		String sendMsg = "DECODE#" + user.getName()+"님이 보낸 귓속말" + "#" + message;
+		String sendMsg = "DECODE#" + user.getName() + "님이 보낸 귓속말" + "#" + message;
 		synchronized (listUser) {
 			for (User user : listUser) {
 				if (user.getName().equals(rcvName)) {
@@ -123,8 +151,6 @@ public class ChatServerThread extends Thread {
 		// 사용자 이름과 함께 전송
 		String sendMsg = "DECODE#" + user.getName() + "#" + message;
 
-		// String sendMsg = Base64.getEncoder().encodeToString((user.getName() +
-		// ":").getBytes()) + message;
 		broadcast(sendMsg);
 	}
 

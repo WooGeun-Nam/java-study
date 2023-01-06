@@ -38,18 +38,18 @@ public class ChatWindow {
 	public ChatWindow(String name, PrintWriter pw, BufferedReader br) {
 		frame = new Frame(name);
 		pannel = new Panel();
-		pannel2 = new Panel();;
+		pannel2 = new Panel();
+		;
 		buttonSend = new Button("전송");
 		textField = new TextField();
 		textArea = new TextArea(30, 70);
 		userList = new List(31);
 		textPane = new TextField();
-		textPane.setSize(60,30);
+		textPane.setSize(60, 30);
 		textPane.setText("도움말은 \" /? , / \" 입니다.");
 		textPane.setEditable(false);
 		userList.setSize(10, 70);
-		
-		
+
 		textPane.setForeground(Color.BLACK);
 		textPane.setFont(new Font("맑은고딕", Font.BOLD, 14));
 
@@ -156,7 +156,9 @@ public class ChatWindow {
 	}
 
 	private void helpDialog() {
-		JOptionPane.showMessageDialog(frame, "/c : 채팅기록 지우기, /q : 나가기\n" + "[리스트에서 대상선택후] /w : 귓속말 예) /w안녕 ");
+		JOptionPane.showMessageDialog(frame, "/c : 채팅기록 지우기, /q : 나가기\n" 
+	                                   + "리스트에서 대상선택 + /w[메세지] : 귓속말 예) /w안녕\n"
+									   + "<관리자 전용 명령어> \n리스트에서 대상선택 + /k, /n[메세지] : 채팅창 공지");
 	}
 
 	private void sendMessage() throws Exception {
@@ -186,12 +188,24 @@ public class ChatWindow {
 					String response = "WHISPER#" + userList.getSelectedItem() + "#" + encodedString;
 					pw.println(response);
 				} else {
-					JOptionPane.showMessageDialog(frame, "대상자를 선택해 주세요.\n");
+					JOptionPane.showMessageDialog(frame, "대상자를 선택해 주세요.");
 				}
 			} else if (cmd.equals("q")) {
 				finish();
+			} else if (cmd.equals("k")) {
+				if (userList.getSelectedItem() != null) {
+					pw.println("KICK#" + userList.getSelectedItem());
+				} else {
+					JOptionPane.showMessageDialog(frame, "대상자를 선택해 주세요.");
+				}
+			} else if (cmd.equals("n")) {
+				if (msg != "") {
+					pw.println("NOTI#" + msg);
+				} else {
+					JOptionPane.showMessageDialog(frame, "잘못된 명령어 입니다.");
+				}
 			} else {
-				JOptionPane.showMessageDialog(frame, "잘못된 명령어 입니다.\n");
+				JOptionPane.showMessageDialog(frame, "잘못된 명령어 입니다.");
 			}
 		} else {
 			// 인코딩
@@ -207,13 +221,13 @@ public class ChatWindow {
 	private void listRefresh() {
 		String[] users = null;
 		userList.removeAll();
-		
+
 		pw.println("LIST");
 		try {
 			String request = br.readLine();
 			if (request != null) {
 				users = request.split(",");
-				for(String name : users) {
+				for (String name : users) {
 					userList.add(name);
 				}
 			}
@@ -255,6 +269,15 @@ public class ChatWindow {
 							String decodedString = new String(decodedBytes, "utf-8");
 
 							data = tokens[1] + ":" + decodedString;
+						} else if (tokens[0].equals("SYS")) {
+							JOptionPane.showMessageDialog(frame, tokens[1]);
+							continue;
+						} else if (tokens[0].equals("EXIT")) {
+							finish();
+							break;
+						} else if (tokens[0].equals("NOTI")) {
+							textPane.setText(tokens[1]);
+							continue;
 						}
 						updateTextArea(data);
 					}
