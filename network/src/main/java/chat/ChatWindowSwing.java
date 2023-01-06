@@ -58,6 +58,7 @@ public class ChatWindowSwing {
         StyleConstants.setFontSize(boldBlue, 14);
         StyleConstants.setBold(boldBlue, true);
         StyleConstants.setForeground(boldBlue, Color.BLACK);
+        StyleConstants.setBackground(boldBlue, pannel2.getBackground());
         try {
 			doc.insertString(doc.getLength(), "도움말은 \" /? , / \" 입니다.", boldBlue);
 		} catch (BadLocationException e) {
@@ -84,6 +85,7 @@ public class ChatWindowSwing {
 		listRefresh();
 
 		// Button
+		buttonSend.setSize(10, 20);
 		buttonSend.setBackground(Color.GRAY);
 		buttonSend.setForeground(Color.WHITE);
 		// 옵저버 패턴
@@ -113,13 +115,13 @@ public class ChatWindowSwing {
 				}
 			}
 		});
-
+		
 		// Pannel
 		pannel.setBackground(Color.LIGHT_GRAY);
 		pannel.add(textField);
 		pannel.add(buttonSend);
 		frame.add(BorderLayout.SOUTH, pannel);
-
+		
 		// TextArea
 		textArea.setEditable(false);
 		pannel2.add(BorderLayout.CENTER, textArea);
