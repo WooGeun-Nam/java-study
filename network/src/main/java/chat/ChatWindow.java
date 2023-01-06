@@ -45,7 +45,7 @@ public class ChatWindow {
 		userList = new List(31);
 		textPane = new TextField();
 		textPane.setSize(60,30);
-		textPane.setText("도움말은 \" /? , / \" 입니다.                                                       | 사용자 목록");
+		textPane.setText("도움말은 \" /? , / \" 입니다.");
 		textPane.setEditable(false);
 		userList.setSize(10, 70);
 		
