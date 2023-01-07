@@ -53,7 +53,7 @@ public class ChatClient {
 			
 			System.out.println("[JOIN:OK]");
 			// 6. ChatClientReceiveThread 시작
-			new ChatClientThread(br).start();
+			new ChatClientThread(br, pw).start();
 			System.out.println("환영합니다. 퇴장명령어는 quit 입니다.");
 			// 키보드 입력처리
 			while (true) {

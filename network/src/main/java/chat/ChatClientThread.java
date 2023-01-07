@@ -2,15 +2,16 @@ package chat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Base64;
 
-import javax.swing.JOptionPane;
-
 public class ChatClientThread extends Thread {
-	private BufferedReader bufferedReader;
+	private BufferedReader br;
+	private PrintWriter pw;
 
-	public ChatClientThread(BufferedReader bufferedReader) {
-		this.bufferedReader = bufferedReader;
+	public ChatClientThread(BufferedReader br, PrintWriter pw) {
+		this.br = br;
+		this.pw = pw;
 	}
 
 	@Override
@@ -18,7 +19,7 @@ public class ChatClientThread extends Thread {
 		/* reader를 통해 읽은 데이터 콘솔에 출력하기 (message 처리) */
 		try {
 			while (true) {
-				String data = bufferedReader.readLine();
+				String data = br.readLine();
 				if (data == null) {
 					System.out.println("서버와 연결이 종료되었습니다.");
 					System.out.println("잠시후 시스템이 종료됩니다.");
@@ -37,6 +38,7 @@ public class ChatClientThread extends Thread {
 						System.out.println("시스템메세지:" + tokens[1]);
 						continue;
 					} else if (tokens[0].equals("EXIT")) {
+						pw.println("QUIT");
 						break;
 					} else if (tokens[0].equals("NOTI")) {
 						System.out.println("공지사항:" + tokens[1]);
