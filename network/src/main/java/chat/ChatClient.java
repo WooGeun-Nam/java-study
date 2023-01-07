@@ -27,7 +27,7 @@ public class ChatClient {
 
 			// 3. 연결
 			socket.connect(new InetSocketAddress(ChatServer.SERVER_IP, ChatServer.PORT));
-			System.out.println("채팅서버와 연결 되었습니다.");
+			System.out.println("[CONNECT:ACCEPT]");
 
 			// 4. reader/writer
 			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
@@ -50,7 +50,8 @@ public class ChatClient {
 				}
 				System.out.println("정확하지 않은 입력입니다. 또는 불가능한 문자(#)가 포함되었 습니다.\n");
 			}
-
+			
+			System.out.println("[JOIN:OK]");
 			// 6. ChatClientReceiveThread 시작
 			new ChatClientThread(br).start();
 			System.out.println("환영합니다. 퇴장명령어는 quit 입니다.");
